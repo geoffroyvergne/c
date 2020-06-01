@@ -3,28 +3,20 @@
 #include <stdlib.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
-#include<unistd.h>
-#include<pthread.h>
-#include<signal.h>
+#include <unistd.h>
+#include <pthread.h>
+#include <signal.h>
 
 void *connection_handler(void *);
-
-void sig_handler(int signo) {
-  if (signo == SIGINT) {
-    printf("received SIGINT\n");
-
-    exit(0);
-    //abort();
-  }
-}
+//void sig_handler(int signo);
 
 int main(int argc, char **argv) {
 
-    if (signal(SIGINT, sig_handler) == SIG_ERR) {
+    /*if (signal(SIGINT, sig_handler) == SIG_ERR) {
         printf("\ncan't catch SIGINT\n");
-    }
+    }*/
 
-    int socket_desc, new_socket, c, *new_sock;
+    int socket_desc, new_socket, sockaddr_in_size, *new_sock;
     struct sockaddr_in server, client;
     char *message;
 
@@ -40,6 +32,13 @@ int main(int argc, char **argv) {
     server.sin_addr.s_addr = INADDR_ANY;
     server.sin_family = AF_INET;
     server.sin_port = htons(8888);
+
+    //true = 1;
+    //setsockopt(sock,SOL_SOCKET,SO_REUSEADDR,&true,sizeof(int))
+
+    if (setsockopt(socket_desc, SOL_SOCKET, SO_REUSEADDR, &(int){1}, sizeof(int)) < 0) {
+        puts("setsockopt(SO_REUSEADDR) failed");
+    }
    
     if (bind(socket_desc, (struct sockaddr *) &server, sizeof(server)) ==- 1) {
         puts("bind failed\n");
@@ -52,8 +51,8 @@ int main(int argc, char **argv) {
 
     // Accept incomming connections
     puts("Waiting for incoming connections...");
-    c = sizeof(struct sockaddr_in);
-    while ((new_socket = accept(socket_desc, (struct sockaddr *) &client, (socklen_t *) &c))) {
+    sockaddr_in_size = sizeof(struct sockaddr_in);
+    while ((new_socket = accept(socket_desc, (struct sockaddr *) &client, (socklen_t *) &sockaddr_in_size))) {
         puts("Connection accepted\n");
 
         //char *client_ip = inet_ntoa(client.sin_addr);
@@ -76,8 +75,8 @@ int main(int argc, char **argv) {
         perror("accept failed\n");
     } 
 
-    close(socket_desc);
-    close(new_socket);
+    shutdown(socket_desc, 2);
+    shutdown(new_socket, 2);
     pthread_exit(NULL);
     return 0;
 }
@@ -104,12 +103,12 @@ void *connection_handler(void *socket_desc) {
 
         //printf("strcmp result : %i\n", strcmp(client_message, quitMessage));
 
-        /*if(strncmp(client_message, quitMessage, 4) == 0) {
-            puts("quit detected\n");
+        if(strncmp(client_message, "/quit", 5) == 0) {
+            puts("/quit detected");
+            //break;
             //free(socket_desc);
-            break;
             //return 0;
-        }*/
+        }
 
         memset(client_message, 0, 2000);
     }
@@ -123,7 +122,20 @@ void *connection_handler(void *socket_desc) {
 
     free(socket_desc);
     //pthread_cancel(socket_desc);
-    pthread_exit(NULL);
+    //pthread_exit(NULL);
 
     return 0;
 }
+
+/*void sig_handler(int signo) {
+  if (signo == SIGINT) {
+    printf("\nreceived SIGINT\n");
+
+    shutdown(socket_desc, 2);
+    shutdown(new_socket, 2);
+    //pthread_exit(NULL);
+
+    //exit(0);
+    //abort();
+  }
+}*/

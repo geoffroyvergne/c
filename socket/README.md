@@ -1,6 +1,7 @@
 # C socket
 
 quit telnet : ctrl + $ > quit
+lsof -i -n -P | grep 8888
 
 https://www.binarytides.com/socket-programming-c-linux-tutorial/
 
