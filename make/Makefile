@@ -6,17 +6,19 @@ EXEC=hellobin
 all: $(EXEC)
 
 hellobin: function.o hello.o
-	$(CC) -o hellobin function.o hello.o $(LDFLAGS)
+	$(CC) -o bin/hellobin bin/function.o bin/hello.o $(LDFLAGS)
 
 function.o: function.c
-	$(CC) -o function.o -c function.c $(CFLAGS)
+	$(CC) -o bin/function.o -c function.c $(CFLAGS)
 
 hello.o: hello.c function.h
-	$(CC) -o hello.o -c hello.c $(CFLAGS)
+	$(CC) -o bin/hello.o -c hello.c $(CFLAGS)
 
-clean:
-	rm -rf *.o
+cleano:
+	rm -rf bin/*.o
 
-cleanall: clean
-	rm -rf $(EXEC)
+clean: cleano
+	rm -rf bin/$(EXEC)
 
+run:
+	./bin/hellobin

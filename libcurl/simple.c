@@ -14,7 +14,9 @@ int main(void) {
 
         res = curl_easy_perform(curl);
 
-        if(res != CURLE_OK) {
+        if(CURLE_OK == res) {
+            
+        } else {
             fprintf(stderr, "curl_easy_perform() failed: %s n", curl_easy_strerror(res));
 
         }
