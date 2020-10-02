@@ -12,3 +12,10 @@ gcc -o bin/simple-example simple-example.c $(xml2-config --cflags --libs)
 gcc -o bin/simple-example simple-example.c \
 -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/libxml2 \
 -L/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib -lxml2 -lz -lpthread -licucore -lm
+
+# cmake conan
+
+mkdir build
+conan install . -if build/
+cmake . -B build/
+cmake --build build/

@@ -1,5 +1,18 @@
 # C Mysql client
 
+## cmake
+
+mkdir build
+conan install . -if build/
+cmake . -B build/
+cmake --build build/
+
+## docker
+
+docker run --name mariadb -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root -d mariadb:latest
+
+## Linux 
+
 vagrant up
 sudo apt install libmysqlclient-dev
 sudo apt install build-essential

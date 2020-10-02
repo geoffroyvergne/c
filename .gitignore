@@ -2,6 +2,8 @@
 .vscode/*
 **/.DS_Store
 **/bin/
+**/build/
+**/app/
 **/.vagrant
 **/*.log
 *.0
