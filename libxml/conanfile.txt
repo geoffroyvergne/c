@@ -1,0 +1,5 @@
+[requires]
+libxml2/2.9.10
+
+[generators]
+cmake

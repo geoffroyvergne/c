@@ -10,3 +10,10 @@ https://github.com/curl/curl/blob/master/docs/examples/parseurl.c
 
 
 gcc parseurl.c -o bin/parseurl `curl-config --cflags --libs`
+
+# cmake conan
+
+mkdir build
+conan install . -if build/
+cmake . -B build/
+cmake --build build/
