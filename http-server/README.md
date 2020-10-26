@@ -14,4 +14,5 @@ cmake --build build/
 
 # Todo
 
+- [ ] Improve string concatenation strcat alternative ?
 - [ ] 

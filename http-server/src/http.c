@@ -6,18 +6,16 @@
 #include <string-utils.h>
 #include <http.h>
 
+// Check if string contains a valid http verb
 int isValidVerb(char * value) {
     int validVerb = 0;
 
-    if(
-        strcmp (value, "get") == 0 || 
-        strcmp (value, "post") == 0 || 
-        strcmp (value, "put") == 0 || 
-        strcmp (value, "delete") == 0 || 
-        strcmp (value, "option") == 0 || 
-        strcmp (value, "patch") == 0
-    ) {
-         validVerb = 1;
+    size_t i = 0;
+    for( i = 0; i < sizeof(HTTP_VERB_LIST) / sizeof(HTTP_VERB_LIST[0]); i++) {
+        if(strcmp (value, HTTP_VERB_LIST[i]) == 0) {
+            validVerb = 1;
+            break;
+        }
     }
 
     return validVerb;
@@ -27,8 +25,6 @@ struct http extract_first_line_header(char *line, char *separator) {
     char* token_line;
     char* rest_line = line;
     char* value;
-    //int validVerb = 0;
-
     struct http http;
 
     while ((token_line = strtok_r(rest_line, separator, &rest_line))) {
@@ -36,8 +32,6 @@ struct http extract_first_line_header(char *line, char *separator) {
         value = toLowerCase(token_line);
 
         if(isValidVerb(value)) {
-            //validVerb = 1;
-            //puts(token_line);
             http.verb = token_line;
         } else if(strstr(value, "http/")) {
             http.protocol = token_line;
@@ -70,10 +64,10 @@ struct http_header extract_headers(char *lines, char *separator) {
 
     while ((token_line = strtok_r(rest_line, separator, &rest_line))) {        
 
-        if(i==0) {
-            http = extract_first_line_header(token_line, " ");
-        }
+        // if it is the first line extract verb path and protocol
+        if(i==0) http = extract_first_line_header(token_line, " ");
 
+        // and extract http standards headers
         token_line = toLowerCase(token_line);
         
         key = "host";
@@ -93,6 +87,8 @@ struct http_header extract_headers(char *lines, char *separator) {
 
         i++;  
     }
+
+    //http.status_code = "200";
 
     http_header.header = header;
     http_header.http = http;

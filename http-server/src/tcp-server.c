@@ -32,6 +32,8 @@ int tcp_connect(int port, char* target, char* host) {
 
     // Prepare sockaddr_in structure
     server.sin_addr.s_addr = inet_addr(host);
+
+    // used to expose on all address
     //server.sin_addr.s_addr = INADDR_ANY;
     
     server.sin_family = AF_INET;
@@ -107,19 +109,30 @@ int tcp_shutdown() {
 void tcp_log(struct http_header* http_header) {
     //printf("%s %s %s %s\n", http_header->http.verb, http_header->http.path, http_header->http.protocol, http_header->header.accept);
 
-    char *log = (char *) malloc( sizeof(char) * 2000 );
-    strcat(log, http_header->http.verb);
-    strcat(log, " ");
-    strcat(log, http_header->http.path);
-    strcat(log, " ");
-    strcat(log, http_header->http.protocol);
+    //char* status_code = (char *) malloc( sizeof(char) * 5 );
+    //sprintf(status_code, "%d", http_header->http.status_code);
 
+    //sprintf(content_len, "%lu", strlen(content));
+
+    //char *log = (char *) malloc( sizeof(char) * 2000 );
+    
+    
+    char *log = (char *) malloc( sizeof(char) * 2000 );
+    strncat(log, http_header->http.verb, strlen(http_header->http.verb));
+    strncat(log, " ", 1);
+    strncat(log, http_header->http.path, strlen(http_header->http.path));
+    strncat(log, " ", 1);
+    strncat(log, http_header->http.protocol, strlen(http_header->http.protocol));
+    strncat(log, " ", 1);
+    strncat(log, http_header->http.status_code, strlen(http_header->http.status_code));
+    strncat(log, " ", 1);
+   
     puts(log);
     free(log);
+    //free(status_code);
 }
 
 void *connection_handler(void* params) {
-    //setbuf(stdout, NULL);  
     struct connection_handler_params *connection_params = (struct connection_handler_params*)params;
 
     int sock = *(int*) connection_params->socket_desc;   
@@ -128,60 +141,39 @@ void *connection_handler(void* params) {
 
     recv(sock, client_message, 2000, 0);
 
-    //char *client_message_array = parseHeader(client_message);
     struct http_header http_header = extract_headers(client_message, "\n");    
 
     strcpy(uri, connection_params->target);
     strcat(uri, http_header.http.path);
     
-    //puts(http_header.http.verb);
-
     char *content = read_file(uri);
 
-    //printf("uri : %s \n", uri);
-    // todo log headers
-    //printf("%s %s %s accept %s\n", http_header.http.verb, http_header.http.path, http_header.http.protocol, http_header.header.accept);
-    //printf("%s\n", http_header.http.verb);
+    char *message = (char *) malloc( sizeof(char) * 2000 );
+    char* content_len = (char *) malloc( sizeof(char) * 5 );
+
+    if(content != NULL) {        
+        message = create_message(content, "200", "OK");
+        write(sock, message, strlen(message)); 
+        http_header.http.status_code = "200";
+    } else {        
+        message = create_message("<h1>404 NOT FOUND</h1>", "404", "NOT FOUND");
+        write(sock, message, strlen(message));
+        http_header.http.status_code = "404";
+    }
 
     tcp_log(&http_header);
+    //free(http_header);
 
-    write_message(content, &sock);
+    //write_message(content, &sock);
+
+    free(content);
+    free(message);
+    free(content_len);
     free(uri);
-
     close(sock);    
     pthread_exit(NULL);
 
     return 0;
-}
-
-void write_message(char *content, int *sock) {
-    char *message = (char *) malloc( sizeof(char) * 2000 );
-    char* content_len = (char *) malloc( sizeof(char) * 5 );
-        
-    //char *content = "<html></html>";
-    //strcpy(message, "HTTP/1.1 200 OK\r\nContent-Length: 55\r\n\r\n<!DOCTYPE html><html><body><h1>index2</h1></body></html>");
-
-    if(content != NULL) {        
-        message = create_message(content, "200", "OK");
-        write(*sock, message, strlen(message));        
-    } else {        
-        message = create_message("<h1>404 NOT FOUND</h1>", "404", "NOT FOUND");
-
-        /*char *uri = (char *) malloc( sizeof(char) * 2000 );
-        strcpy(uri, connection_params->target);
-        strcat(uri, "/error/404.html");
-        char *content = read_file(uri);*/
-
-        write(*sock, message, strlen(message));
-    }
-
-    free(content);
-    free(message);
-
-    //strcat(content, "");
-    //strcat(message, "");
-
-    free(content_len);
 }
 
 char* create_message(char *content, char* http_code, char *http_reason) {
