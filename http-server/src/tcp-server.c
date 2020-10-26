@@ -109,27 +109,19 @@ int tcp_shutdown() {
 void tcp_log(struct http_header* http_header) {
     //printf("%s %s %s %s\n", http_header->http.verb, http_header->http.path, http_header->http.protocol, http_header->header.accept);
 
-    //char* status_code = (char *) malloc( sizeof(char) * 5 );
-    //sprintf(status_code, "%d", http_header->http.status_code);
-
-    //sprintf(content_len, "%lu", strlen(content));
-
-    //char *log = (char *) malloc( sizeof(char) * 2000 );
-    
-    
     char *log = (char *) malloc( sizeof(char) * 2000 );
-    strncat(log, http_header->http.verb, strlen(http_header->http.verb));
+    strncat(log, http_header->http->verb, strlen(http_header->http->verb));
     strncat(log, " ", 1);
-    strncat(log, http_header->http.path, strlen(http_header->http.path));
+    strncat(log, http_header->http->path, strlen(http_header->http->path));
     strncat(log, " ", 1);
-    strncat(log, http_header->http.protocol, strlen(http_header->http.protocol));
+    strncat(log, http_header->http->protocol, strlen(http_header->http->protocol));
     strncat(log, " ", 1);
-    strncat(log, http_header->http.status_code, strlen(http_header->http.status_code));
+    strncat(log, http_header->http->status_code, strlen(http_header->http->status_code));
     strncat(log, " ", 1);
    
     puts(log);
     free(log);
-    //free(status_code);
+    //free(http_header);
 }
 
 void *connection_handler(void* params) {
@@ -141,10 +133,10 @@ void *connection_handler(void* params) {
 
     recv(sock, client_message, 2000, 0);
 
-    struct http_header http_header = extract_headers(client_message, "\n");    
+    struct http_header* http_header = extract_headers(client_message, "\n");    
 
     strcpy(uri, connection_params->target);
-    strcat(uri, http_header.http.path);
+    strcat(uri, http_header->http->path);
     
     char *content = read_file(uri);
 
@@ -154,15 +146,15 @@ void *connection_handler(void* params) {
     if(content != NULL) {        
         message = create_message(content, "200", "OK");
         write(sock, message, strlen(message)); 
-        http_header.http.status_code = "200";
+        http_header->http->status_code = "200";
     } else {        
         message = create_message("<h1>404 NOT FOUND</h1>", "404", "NOT FOUND");
         write(sock, message, strlen(message));
-        http_header.http.status_code = "404";
+        http_header->http->status_code = "404";
     }
 
-    tcp_log(&http_header);
-    //free(http_header);
+    tcp_log(http_header);
+    free(http_header);
 
     //write_message(content, &sock);
 
@@ -182,14 +174,14 @@ char* create_message(char *content, char* http_code, char *http_reason) {
     sprintf(content_len, "%lu", strlen(content));
 
     strcat(result, "HTTP/1.1");
-    strcat(result, " ");
-    strcat(result, http_code);
-    strcat(result, " ");
-    strcat(result, http_reason);
+    strncat(result, " ", 1);
+    strncat(result, http_code, strlen(http_code));
+    strncat(result, " ", 1);
+    strncat(result, http_reason, strlen(http_reason));
     strcat(result, "\r\nContent-Length:");
-    strcat(result, content_len);
+    strncat(result, content_len, strlen(content_len));
     strcat(result, "\r\n\r\n");
-    strcat(result, content);
+    strncat(result, content, strlen(content));
 
     //printf("%s", result);
 

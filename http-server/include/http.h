@@ -23,9 +23,9 @@ struct http {
 };
 
 struct http_header {
-    struct header header;
-    struct http http;
+    struct header* header;
+    struct http* http;
 };
 
-struct http extract_first_line_header(char *line, char *separator);
-struct http_header extract_headers(char *lines, char *separator);
+struct http *extract_first_line_header(char *line, char *separator);
+struct http_header* extract_headers(char *lines, char *separator);

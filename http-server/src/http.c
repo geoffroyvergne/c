@@ -21,29 +21,30 @@ int isValidVerb(char * value) {
     return validVerb;
 }
 
-struct http extract_first_line_header(char *line, char *separator) {
+struct http* extract_first_line_header(char *line, char *separator) {
     char* token_line;
     char* rest_line = line;
     char* value;
-    struct http http;
+    struct http* http;
+    http = (struct http*) malloc(sizeof(struct http));
 
     while ((token_line = strtok_r(rest_line, separator, &rest_line))) {
 
         value = toLowerCase(token_line);
 
         if(isValidVerb(value)) {
-            http.verb = token_line;
+            http->verb = token_line;
         } else if(strstr(value, "http/")) {
-            http.protocol = token_line;
+            http->protocol = token_line;
         } else {
-            http.path = token_line;
+            http->path = token_line;
         }
     }
 
     return http;
 }
 
-struct http_header extract_headers(char *lines, char *separator) {  
+struct http_header* extract_headers(char *lines, char *separator) {  
 
     // GET / HTTP/1.0 <CRLF><CRLF>
     /*
@@ -58,9 +59,14 @@ struct http_header extract_headers(char *lines, char *separator) {
     char* key;
     int i=0;
 
-    struct header header;
-    struct http http;
-    struct http_header http_header;
+    struct header* header;
+    header = (struct header*) malloc(sizeof(struct header));
+
+    struct http *http;
+    http = (struct http*) malloc(sizeof(struct http));
+
+    struct http_header *http_header;
+    http_header = (struct http_header*) malloc(sizeof(struct http_header));
 
     while ((token_line = strtok_r(rest_line, separator, &rest_line))) {        
 
@@ -72,17 +78,17 @@ struct http_header extract_headers(char *lines, char *separator) {
         
         key = "host";
         if(strstr(token_line, key)) {
-            header.host = substr(token_line, (strlen(key)+2), strlen(token_line));
+            header->host = substr(token_line, (strlen(key)+2), strlen(token_line));
         }
 
         key = "user-agent";
         if(strstr(token_line, key)) {
-            header.user_agent = substr(token_line, (strlen(key)+2), strlen(token_line));
+            header->user_agent = substr(token_line, (strlen(key)+2), strlen(token_line));
         }
 
         key = "accept";
         if(strstr(token_line, key)) {
-            header.accept = substr(token_line, (strlen(key)+2), strlen(token_line));
+            header->accept = substr(token_line, (strlen(key)+2), strlen(token_line));
         }      
 
         i++;  
@@ -90,8 +96,8 @@ struct http_header extract_headers(char *lines, char *separator) {
 
     //http.status_code = "200";
 
-    http_header.header = header;
-    http_header.http = http;
+    http_header->header = header;
+    http_header->http = http;
 
     return http_header;
 }
