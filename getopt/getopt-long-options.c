@@ -3,6 +3,7 @@
 #include <getopt.h>
 
 static int verbose_flag;
+static int brief_flag;
 
 void print_usage() {
     printf("Usage: rectangle [ap] -l num -b num\n");
@@ -13,7 +14,7 @@ int main(int argc, char **argv) {
 
     static struct option long_options[] = {
         {"verbose", no_argument, &verbose_flag, 1},
-        {"brief", no_argument, &verbose_flag, 0},
+        {"brief", no_argument, &brief_flag, 0},
         {"add", no_argument, 0, 'a'},
         {"append", no_argument, 0, 'b'},
         {"delete", required_argument, 0, 'd'},
@@ -53,6 +54,10 @@ int main(int argc, char **argv) {
 
     if(verbose_flag) {
         puts("verbose flag is set");
+    }
+
+    if(brief_flag) {
+        puts("brief flag is set");
     }
 
     if(optind < argc) {

@@ -8,20 +8,28 @@
 #include <signal.h>
 #include <string.h>
 
-void *connection_handler(void *);
-//void sig_handler(int signo);
+#include <tcp-server.h>
+#include <main.h>
+#include <cli.h>
 
-int main(int argc, char **argv) {
+int socket_desc, new_socket, sockaddr_in_size, *new_sock;
+struct sockaddr_in server, client;
+char *message;
+char *client_message;
+
+char* getHelp() {
+    return "Avaliable commands : ping quit help \n";
+    exit(EXIT_SUCCESS);
+}
+
+int tcp_connect(int port) {
+    printf("Start tcp-server port : %i\n", port);
 
     /*if (signal(SIGINT, sig_handler) == SIG_ERR) {
         printf("\ncan't catch SIGINT\n");
     }*/
 
-    int socket_desc, new_socket, sockaddr_in_size, *new_sock;
-    struct sockaddr_in server, client;
-    char *message;
-
-    // Create socket
+     // Create socket
     socket_desc = socket(AF_INET, SOCK_STREAM, 0);
 
     if(socket_desc == -1) {
@@ -32,7 +40,7 @@ int main(int argc, char **argv) {
     //server.sin_addr.s_addr = inet_addr("127.0.0.1");
     server.sin_addr.s_addr = INADDR_ANY;
     server.sin_family = AF_INET;
-    server.sin_port = htons(8888);
+    server.sin_port = htons(port);
 
     //true = 1;
     //setsockopt(sock,SOL_SOCKET,SO_REUSEADDR,&true,sizeof(int))
@@ -76,24 +84,22 @@ int main(int argc, char **argv) {
         perror("accept failed\n");
     } 
 
-    shutdown(socket_desc, 2);
-    shutdown(new_socket, 2);
-    pthread_exit(NULL);
     return 0;
 }
 
-char* getHelp() {
-    return "Avaliable commands : ping quit help \n";
+int tcp_shutdown() {
+    shutdown(socket_desc, 2);
+    shutdown(new_socket, 2);
+    pthread_exit(NULL);
 }
-
 
 void *connection_handler(void *socket_desc) {
     int sock = *(int*) socket_desc;
     int read_size;
    
     //char client_message[2000];
-    char *client_message = (char *) malloc( 2000 );
-    char *message = (char *) malloc( 2000 );
+    client_message = (char *) malloc( 2000 );
+    message = (char *) malloc( 2000 );
 
     strcpy(message, "Welcome! \n");
     write(sock, message, strlen(message));
