@@ -78,7 +78,7 @@ struct http_header* extract_headers(char *lines, char *separator) {
         
         key = "host";
         if(strstr(token_line, key)) {
-            header->host = substr(token_line, (strlen(key)+2), strlen(token_line));
+            header->host = substr(token_line, (strlen(key)+2), (strlen(token_line) -1));
         }
 
         key = "user-agent";

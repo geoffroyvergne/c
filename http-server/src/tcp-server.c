@@ -20,14 +20,13 @@ struct connection_handler_params {
 int socket_desc, new_socket, sockaddr_in_size, *new_sock;
 struct sockaddr_in server, client;
 
-int tcp_connect(int port, char* target, char* host) {
-    printf("Start http-server port : %i\n", port);
+int tcp_connect(int port, char* target, char* host) {   
 
-        // Create socket
+    // Create socket
     socket_desc = socket(AF_INET, SOCK_STREAM, 0);
 
     if(socket_desc == -1) {
-        printf("Could not create socket\n");
+        puts("Could not create socket");
     }
 
     // Prepare sockaddr_in structure
@@ -40,11 +39,11 @@ int tcp_connect(int port, char* target, char* host) {
     server.sin_port = htons(port);
 
     if (setsockopt(socket_desc, SOL_SOCKET, SO_REUSEADDR, &(int){1}, sizeof(int)) < 0) {
-        puts("setsockopt(SO_REUSEADDR) failed");
+        perror("setsockopt(SO_REUSEADDR) failed");
     }
    
     if (bind(socket_desc, (struct sockaddr *) &server, sizeof(server)) ==- 1) {
-        puts("bind failed\n");
+        perror("bind failed");
         return 1;
     }
 
@@ -107,21 +106,31 @@ int tcp_shutdown() {
 }*/
 
 void tcp_log(struct http_header* http_header) {
+    //setbuf(stdout, NULL);  
     //printf("%s %s %s %s\n", http_header->http.verb, http_header->http.path, http_header->http.protocol, http_header->header.accept);
 
+    //printf("strlen : %lu \n", strlen(http_header->header->host));
+
+    //puts(http_header->http->protocol);
+
     char *log = (char *) malloc( sizeof(char) * 2000 );
-    strncat(log, http_header->http->verb, strlen(http_header->http->verb));
-    strncat(log, " ", 1);
-    strncat(log, http_header->http->path, strlen(http_header->http->path));
-    strncat(log, " ", 1);
-    strncat(log, http_header->http->protocol, strlen(http_header->http->protocol));
-    strncat(log, " ", 1);
-    strncat(log, http_header->http->status_code, strlen(http_header->http->status_code));
-    strncat(log, " ", 1);
-   
-    puts(log);
-    free(log);
-    //free(http_header);
+    
+    strncat(log, http_header->http->verb, (strlen(http_header->http->verb)));
+    strcat(log, " ");
+    strncat(log, http_header->header->host, (strlen(http_header->header->host)));
+    strcat(log, " ");
+    strncat(log, http_header->http->path, (strlen(http_header->http->path)));
+    strcat(log, " ");
+    strncat(log, http_header->http->protocol, (strlen(http_header->http->protocol) -1));
+    strcat(log, " ");
+    strncat(log, http_header->http->status_code, (strlen(http_header->http->status_code)));
+    strcat(log, " "); 
+    strncat(log, http_header->header->user_agent, (strlen(http_header->header->user_agent) -1));
+    strcat(log, " ");  
+    strncat(log, http_header->header->accept, (strlen(http_header->header->accept) -1));
+    strcat(log, " ");       
+
+    puts(log);    
 }
 
 void *connection_handler(void* params) {
