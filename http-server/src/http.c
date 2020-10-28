@@ -6,6 +6,22 @@
 #include <string-utils.h>
 #include <http.h>
 
+char* getContentType(char* uri) {
+    if(strstr(uri, ".txt")) return "application/text";
+    //if(strstr(uri, ".htm")) return "text/htm";
+    if(strstr(uri, ".html")) return "text/html";
+
+    if(strstr(uri, ".css")) return "text/css";
+    if(strstr(uri, ".js")) return "application/javascript";
+
+    if(strstr(uri, ".png")) return "image/png";
+    if(strstr(uri, ".jpg")) return "image/jpeg";
+    if(strstr(uri, ".gif")) return "image/gif";
+    if(strstr(uri, ".svg")) return "image/svg+xml";
+
+    return NULL;
+}
+
 // Check if string contains a valid http verb
 int isValidVerb(char * value) {
     int validVerb = 0;
@@ -35,7 +51,7 @@ struct http* extract_first_line_header(char *line, char *separator) {
         if(isValidVerb(value)) {
             http->verb = token_line;
         } else if(strstr(value, "http/")) {
-            http->protocol = token_line;
+            http->protocol = substr(token_line, 0, (strlen(token_line) -1));
         } else {
             http->path = token_line;
         }
@@ -75,6 +91,17 @@ struct http_header* extract_headers(char *lines, char *separator) {
 
         // and extract http standards headers
         token_line = toLowerCase(token_line);
+
+        // iterate over headers to extract them
+        /*size_t j = 0;
+        for( j = 0; j < sizeof(HTTP_HEADER_LIST) / sizeof(HTTP_HEADER_LIST[0]); j++) {
+            //key = HTTP_HEADER_LIST[j];
+            if(strstr(token_line, HTTP_HEADER_LIST[j])) {
+                header->host = substr(token_line, (strlen(HTTP_HEADER_LIST[j])+2), (strlen(token_line) -1));
+            }
+
+            //puts(HTTP_HEADER_LIST[j]);
+        }*/
         
         key = "host";
         if(strstr(token_line, key)) {
@@ -83,13 +110,13 @@ struct http_header* extract_headers(char *lines, char *separator) {
 
         key = "user-agent";
         if(strstr(token_line, key)) {
-            header->user_agent = substr(token_line, (strlen(key)+2), strlen(token_line));
+            header->user_agent = substr(token_line, (strlen(key)+2), strlen(token_line) -1);
         }
 
         key = "accept";
         if(strstr(token_line, key)) {
-            header->accept = substr(token_line, (strlen(key)+2), strlen(token_line));
-        }      
+            header->accept = substr(token_line, (strlen(key)+2), strlen(token_line) -1);
+        }
 
         i++;  
     }

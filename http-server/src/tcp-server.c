@@ -107,30 +107,38 @@ int tcp_shutdown() {
 
 void tcp_log(struct http_header* http_header) {
     //setbuf(stdout, NULL);  
-    //printf("%s %s %s %s\n", http_header->http.verb, http_header->http.path, http_header->http.protocol, http_header->header.accept);
+    printf("%s %s %s %s %d %s %s\n", 
+        http_header->http->verb, 
+        http_header->header->host,
+        http_header->http->path, 
+        http_header->http->protocol, 
+        http_header->http->status_code,
+        http_header->header->accept,
+        http_header->header->user_agent
+    );
 
     //printf("strlen : %lu \n", strlen(http_header->header->host));
 
     //puts(http_header->http->protocol);
 
-    char *log = (char *) malloc( sizeof(char) * 2000 );
+    /*char *log = (char *) malloc( sizeof(char) * 2000 );
     
-    strncat(log, http_header->http->verb, (strlen(http_header->http->verb)));
+    strncat(log, http_header->http->verb, strlen(http_header->http->verb));
     strcat(log, " ");
-    strncat(log, http_header->header->host, (strlen(http_header->header->host)));
+    strncat(log, http_header->header->host, strlen(http_header->header->host));
     strcat(log, " ");
-    strncat(log, http_header->http->path, (strlen(http_header->http->path)));
+    strncat(log, http_header->http->path, strlen(http_header->http->path));
     strcat(log, " ");
-    strncat(log, http_header->http->protocol, (strlen(http_header->http->protocol) -1));
+    strncat(log, http_header->http->protocol, strlen(http_header->http->protocol));
     strcat(log, " ");
-    strncat(log, http_header->http->status_code, (strlen(http_header->http->status_code)));
+    strncat(log, http_header->http->status_code, strlen(http_header->http->status_code));
     strcat(log, " "); 
-    strncat(log, http_header->header->user_agent, (strlen(http_header->header->user_agent) -1));
+    strncat(log, http_header->header->user_agent, strlen(http_header->header->user_agent));
     strcat(log, " ");  
-    strncat(log, http_header->header->accept, (strlen(http_header->header->accept) -1));
+    strncat(log, http_header->header->accept, strlen(http_header->header->accept));
     strcat(log, " ");       
 
-    puts(log);    
+    puts(log);    */
 }
 
 void *connection_handler(void* params) {
@@ -146,27 +154,36 @@ void *connection_handler(void* params) {
 
     strcpy(uri, connection_params->target);
     strcat(uri, http_header->http->path);
+
+    char* contentType = getContentType(uri);
+    http_header->http->content_type = contentType;
     
     char *content = read_file(uri);
 
     char *message = (char *) malloc( sizeof(char) * 2000 );
     char* content_len = (char *) malloc( sizeof(char) * 5 );
 
-    if(content != NULL) {        
-        message = create_message(content, "200", "OK");
-        write(sock, message, strlen(message)); 
-        http_header->http->status_code = "200";
-    } else {        
-        message = create_message("<h1>404 NOT FOUND</h1>", "404", "NOT FOUND");
-        write(sock, message, strlen(message));
-        http_header->http->status_code = "404";
+    if(content != NULL) {
+        http_header->http->status_code = 200;
+        http_header->http->status_reason = "OK";  
+        message = create_message(content, http_header);
+        write(sock, message, strlen(message));         
+    } else {
+        char* not_found_uri = (char *) malloc( sizeof(char) * 2000 );
+        strcpy(not_found_uri, connection_params->target);
+        strcat(not_found_uri, "/error/404.html");
+        char *content = read_file(not_found_uri);
+
+        http_header->http->status_code = 404;
+        http_header->http->status_reason = "NOT FOUND";
+        message = create_message(content, http_header);
+        write(sock, message, strlen(message));        
+
+        free(not_found_uri);
     }
 
     tcp_log(http_header);
     free(http_header);
-
-    //write_message(content, &sock);
-
     free(content);
     free(message);
     free(content_len);
@@ -177,12 +194,12 @@ void *connection_handler(void* params) {
     return 0;
 }
 
-char* create_message(char *content, char* http_code, char *http_reason) {
+char* create_message(char *content, struct http_header* http_header) {
     char *result = (char *) malloc( sizeof(char) * 2000 );
-    char* content_len = (char *) malloc( sizeof(char) * 5 );
-    sprintf(content_len, "%lu", strlen(content));
+    //char* content_len = (char *) malloc( sizeof(char) * 5 );
+    //sprintf(content_len, "%lu", strlen(content));
 
-    strcat(result, "HTTP/1.1");
+    /*strcat(result, "HTTP/1.1");
     strncat(result, " ", 1);
     strncat(result, http_code, strlen(http_code));
     strncat(result, " ", 1);
@@ -190,9 +207,22 @@ char* create_message(char *content, char* http_code, char *http_reason) {
     strcat(result, "\r\nContent-Length:");
     strncat(result, content_len, strlen(content_len));
     strcat(result, "\r\n\r\n");
-    strncat(result, content, strlen(content));
+    strncat(result, content, strlen(content));*/
+
+    char* template = "%s %d %s\r\nContent-Length: %lu\r\nContent-Type: %s\r\n\r\n%s\n";
+    //char* template = "%s %d %s\r\nContent-Type: %s\r\n\r\n%s\n";
 
     //printf("%s", result);
+    sprintf(result, template, 
+        toUpperCase(http_header->http->protocol),
+        http_header->http->status_code, 
+        http_header->http->status_reason, 
+        strlen(content),
+        http_header->http->content_type, 
+        content
+    );
+
+    //puts(result);
 
     return result;
 }

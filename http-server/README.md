@@ -14,5 +14,8 @@ cmake --build build/
 
 # Todo
 
-- [ ] Improve string concatenation strcat alternative ?
-- [ ] 
+- [ X ] Improve string concatenation strcat alternative ?
+- [ X ] Use file for 404 error
+- [ ] Use ini file for config
+- [ ] add unit tests
+- [ ] Add Memory Leak checker -Valgrind

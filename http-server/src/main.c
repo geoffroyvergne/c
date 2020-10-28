@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
 
     struct config conf = getOptions(argc, argv);
 
-     printf("Start http-server port : %i\n", conf.port);
+    printf("Start http-server port : %i\n", conf.port);
 
     tcp_connect(conf.port, conf.target, "127.0.0.1");
     tcp_shutdown();
