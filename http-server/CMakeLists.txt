@@ -3,16 +3,21 @@ project(http-server VERSION 1.0)
 
 set(C_STANDARD 11)
 
-file(GLOB_RECURSE SOURCES LIST_DIRECTORIES true src/*.c)
-set(SOURCES ${SOURCES})
+# group common lib file list to compile
+file(GLOB_RECURSE SOURCES_COMMON LIST_DIRECTORIES true src/common/*.c)
+set(SOURCES_COMMON ${SOURCES_COMMON})
+
+file(GLOB_RECURSE SOURCES_MAIN LIST_DIRECTORIES true src/main/*.c)
+set(SOURCES_MAIN ${SOURCES_MAIN})
+
+file(GLOB_RECURSE SOURCES_TEST LIST_DIRECTORIES true src/test/*.c)
+set(SOURCES_TEST ${SOURCES_TEST})
 
 include_directories(include)
 
-set(BINARY ${CMAKE_PROJECT_NAME})
+# add common folder as lib
+add_subdirectory(src/common)
+list(APPEND EXTRA_LIBS src/common)
 
-# Add conan dependencies
-include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-conan_basic_setup()
-
-add_executable(${BINARY} ${SOURCES})
-target_link_libraries(${BINARY} ${CONAN_LIBS})
+add_subdirectory(src/main)
+add_subdirectory(src/test)
