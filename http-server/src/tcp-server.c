@@ -20,7 +20,7 @@ struct connection_handler_params {
 int socket_desc, new_socket, sockaddr_in_size, *new_sock;
 struct sockaddr_in server, client;
 
-int tcp_connect(int port, char* target, char* host) {   
+int tcp_connect(int port, char* host, char* target) {   
 
     // Create socket
     socket_desc = socket(AF_INET, SOCK_STREAM, 0);
@@ -34,6 +34,9 @@ int tcp_connect(int port, char* target, char* host) {
 
     // used to expose on all address
     //server.sin_addr.s_addr = INADDR_ANY;
+
+    // used to expose on localhost
+    //server.sin_addr.s_addr = INADDR_LOOPBACK
     
     server.sin_family = AF_INET;
     server.sin_port = htons(port);

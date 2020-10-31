@@ -9,4 +9,10 @@ set(SOURCES ${SOURCES})
 include_directories(include)
 
 set(BINARY ${CMAKE_PROJECT_NAME})
+
+# Add conan dependencies
+include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+conan_basic_setup()
+
 add_executable(${BINARY} ${SOURCES})
+target_link_libraries(${BINARY} ${CONAN_LIBS})

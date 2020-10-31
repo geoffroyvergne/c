@@ -2,16 +2,19 @@
 #include <stdlib.h>
 #include <getopt.h>
 #include <cli.h>
+#include <config.h>
 
-struct config getOptions(int argc, char **argv) {
+config getOptions(int argc, char **argv) {
     int opt;
     int option_index = 0;
 
-    struct config conf;
+    config conf;    
+
     conf.port = 3000;
     conf.target = "./www";
+    conf.host = "127.0.0.1";
 
-    while ((opt = getopt_long(argc, argv, "vhp:", long_options, &option_index)) != -1) {
+    while ((opt = getopt_long(argc, argv, "vhp:h:t:c:", long_options, &option_index)) != -1) {
         switch(opt) {
             case 0:
                 break;
@@ -29,6 +32,9 @@ struct config getOptions(int argc, char **argv) {
                 break;
             case 't':                
                 conf.target = optarg;                
+                break;
+             case 'c':                
+                conf.file = optarg;                
                 break;
             case '?':
                 break;

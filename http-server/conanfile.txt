@@ -1,0 +1,6 @@
+[requires]
+inih/52
+gtest/1.10.0
+
+[generators]
+cmake
