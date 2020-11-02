@@ -12,6 +12,8 @@
 #include <string-utils.h>
 #include <http.h>
 
+void sig_handler(int signo);
+
 struct connection_handler_params {
     void *socket_desc;
     char *target;
@@ -20,7 +22,11 @@ struct connection_handler_params {
 int socket_desc, new_socket, sockaddr_in_size, *new_sock;
 struct sockaddr_in server, client;
 
-int tcp_connect(int port, char* host, char* target) {   
+int tcp_connect(int port, char* host, char* target) {  
+
+    if (signal(SIGINT, sig_handler) == SIG_ERR) {
+        printf("\ncan't catch SIGINT\n");
+    } 
 
     // Create socket
     socket_desc = socket(AF_INET, SOCK_STREAM, 0);
@@ -228,4 +234,17 @@ char* create_message(char *content, struct http_header* http_header) {
     //puts(result);
 
     return result;
+}
+
+void sig_handler(int signo) {
+  if (signo == SIGINT) {
+    printf("received SIGINT\n");
+
+    shutdown(socket_desc, 2);
+    shutdown(new_socket, 2);
+    //pthread_exit(NULL);
+
+    exit(0);
+    //abort();
+  }
 }

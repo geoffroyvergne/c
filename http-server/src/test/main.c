@@ -1,12 +1,9 @@
 #include <stdio.h>
 #include <CUnit/Basic.h>
-#include <unit-tests.h>
+#include <test/unit-tests.h>
 
-void basicTest1(void) {
+void basicTest(void) {
   CU_ASSERT(2+2 == 4);
-}
-
-void basicTest2(void) {
   CU_ASSERT(1+1 == 2);
 }
 
@@ -32,10 +29,10 @@ int main(int argc, char **argv) {
    /* add the tests to the suite */
    /* NOTE - ORDER IS IMPORTANT - MUST TEST fread() AFTER fprintf() */
    if (
-      (NULL == CU_add_test(pSuite, "test of basicTest1()", basicTest1)) ||
-      (NULL == CU_add_test(pSuite, "test of basicTest2()", basicTest2)) ||
-      (NULL == CU_add_test(pSuite, "test of basicHttpTest1()", basicHttpTest1)) ||
-      (NULL == CU_add_test(pSuite, "test of basicHttpTest2()", basicHttpTest2))
+      (NULL == CU_add_test(pSuite, "test of basicTest()", basicTest)) ||
+      (NULL == CU_add_test(pSuite, "test of httpTest()", httpTest)) ||
+      (NULL == CU_add_test(pSuite, "test of fileTest()", fileTest)) ||
+      (NULL == CU_add_test(pSuite, "test of testStringUtils()", testStringUtils))
       )
    {
       CU_cleanup_registry();
