@@ -13,6 +13,7 @@ config getOptions(int argc, char **argv) {
     conf.port = 3000;
     conf.target = "./www";
     conf.host = "127.0.0.1";
+    conf.file = "/etc/http-server/conf.ini"
 
     while ((opt = getopt_long(argc, argv, "vhp:h:t:c:", long_options, &option_index)) != -1) {
         switch(opt) {

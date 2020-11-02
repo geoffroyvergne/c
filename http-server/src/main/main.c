@@ -24,13 +24,12 @@ int main(int argc, char **argv) {
     config conf = getOptions(argc, argv);
 
     // if cli file provided get ini config
-    if(conf.file != NULL) {
+    /*if(conf.file != NULL) {
         conf = getIniConfig(conf.file);
+        printConfig(conf);
     }
 
-    printConfig(conf);
-
-    printf("Start http-server port : %i\n", conf.port);
+    printf("Start http-server port : %i\n", conf.port);*/
 
     // start server socket
     tcp_connect(conf.port, conf.host, conf.target);

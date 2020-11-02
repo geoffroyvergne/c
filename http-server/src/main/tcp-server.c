@@ -30,10 +30,10 @@ int tcp_connect(int port, char* host, char* target) {
     }
 
     // Prepare sockaddr_in structure
-    server.sin_addr.s_addr = inet_addr(host);
+    //server.sin_addr.s_addr = inet_addr(host);
 
     // used to expose on all address
-    //server.sin_addr.s_addr = INADDR_ANY;
+    server.sin_addr.s_addr = INADDR_ANY;
 
     // used to expose on localhost
     //server.sin_addr.s_addr = INADDR_LOOPBACK

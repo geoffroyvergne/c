@@ -20,6 +20,16 @@ cmake --build build/
 ./build/src/bin/http-server_test
 ```
 
+# Docker
+
+```
+docker build . -t http-server
+docker run -p 3000:3000 --name http-server --rm http-server
+docker run -ti --name http-server --rm http-server /usr/local/bin/http-server_main
+
+docker run -ti --name http-server --rm http-server bash
+```
+
 # Todo
 
 - [ X ] Improve string concatenation strcat alternative ?
@@ -29,6 +39,6 @@ cmake --build build/
 - [ ] Add Memory Leak checker -Valgrind
 - [ ] give ability to use localhost and 0.0.0.0 on socket
 - [ ] use constants for http return header mimetype ...
-- [ ] dockerize it
+- [ ] dockerize
+- [ ] manage errors (www target ini conf ...)
 - [ ] 
-
