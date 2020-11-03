@@ -13,9 +13,10 @@ config getOptions(int argc, char **argv) {
     conf.port = 3000;
     conf.target = "./www";
     conf.host = "127.0.0.1";
-    conf.file = "/etc/http-server/conf.ini";
+    //conf.file = "/etc/http-server/conf.ini";
+    conf.file = "";
 
-    while ((opt = getopt_long(argc, argv, "vhp:h:t:c:", long_options, &option_index)) != -1) {
+    while ((opt = getopt_long(argc, argv, "vhp:h:t:c:o:", long_options, &option_index)) != -1) {
         switch(opt) {
             case 0:
                 break;
@@ -30,6 +31,9 @@ config getOptions(int argc, char **argv) {
                 break;
             case 'p':                
                 conf.port = atoi(optarg);                
+                break;
+            case 'o':                
+                conf.host = optarg;
                 break;
             case 't':                
                 conf.target = optarg;                

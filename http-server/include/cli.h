@@ -8,7 +8,7 @@ static struct option long_options[] = {
     {"version", no_argument, 0, 'v'},
     {"help", no_argument, 0, 'h'},
     {"port", required_argument, 0, 'p'},
-    {"host", required_argument, 0, 'h'},
+    {"host", required_argument, 0, 'o'},
     {"target", required_argument, 0, 't'},
     {"config", required_argument, 0, 'c'}
 };

@@ -20,16 +20,21 @@ void printConfig(config conf) {
 
 int main(int argc, char **argv) {
 
+    setbuf(stdout, NULL);  
+
     // get config from cli
     config conf = getOptions(argc, argv);
+    //char* confFile = conf.file;
+
+    //size_t len = strlen(conf.file);
 
     // if cli file provided get ini config
-    /*if(conf.file != NULL) {
+    if(strlen(conf.file) > 0) {
         conf = getIniConfig(conf.file);
         printConfig(conf);
     }
 
-    printf("Start http-server port : %i\n", conf.port);*/
+    printf("Start http-server host : %s port : %i\n", conf.host, conf.port);
 
     // start server socket
     tcp_connect(conf.port, conf.host, conf.target);

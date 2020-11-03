@@ -27,6 +27,9 @@ docker build . -t http-server
 docker run -p 3000:3000 --name http-server --rm http-server
 docker run -ti --name http-server --rm http-server /usr/local/bin/http-server_main
 
+docker run -p 3000:3000 --name http-server --rm http-server -c /etc/http-server/conf.ini
+docker run -p 8000:8000 --name http-server --rm http-server -p 8000
+
 docker run -ti --name http-server --rm http-server bash
 ```
 

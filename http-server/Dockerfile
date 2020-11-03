@@ -16,7 +16,10 @@ FROM conanio/clang9
 
 COPY --from=build /home/conan/build/src/bin/http-server_main  /usr/local/bin
 COPY www /var/www
+COPY etc/conf.ini /etc/http-server/conf.ini
 COPY entrypoint.sh /usr/local/bin
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh", "/usr/local/bin/http-server_main"]
-CMD ["-t", "/var/www"]
+CMD ["-t", "/var/www", "--host", "0.0.0.0"]
+
+#CMD ["/usr/local/bin/http-server_main", "-t", "/var/www"]

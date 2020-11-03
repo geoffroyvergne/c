@@ -35,11 +35,25 @@ int tcp_connect(int port, char* host, char* target) {
         puts("Could not create socket");
     }
 
+    if(strstr(host, "0.0.0.0")) {
+        server.sin_addr.s_addr = INADDR_ANY;
+    } 
+    
+    if(strstr(host, "127.0.0.1")) {
+        server.sin_addr.s_addr = INADDR_LOOPBACK;
+    } 
+    
+    if (strstr(host, "localhost")) {
+        server.sin_addr.s_addr = INADDR_LOOPBACK;
+    } 
+    
+    server.sin_addr.s_addr = inet_addr(host);
+
     // Prepare sockaddr_in structure
     //server.sin_addr.s_addr = inet_addr(host);
 
     // used to expose on all address
-    server.sin_addr.s_addr = INADDR_ANY;
+    //server.sin_addr.s_addr = INADDR_ANY;
 
     // used to expose on localhost
     //server.sin_addr.s_addr = INADDR_LOOPBACK
@@ -95,27 +109,7 @@ int tcp_shutdown() {
     pthread_exit(NULL);
 }
 
-/*char* parseHeader(char* client_message) {
-
-    //setbuf(stdout, NULL);  
-   
-    char *client_message_array = strtok(client_message, " ");    
-
-    int i=0;
-    while(client_message_array != NULL) {
-        if(i == 1) break;
-        client_message_array = strtok(NULL, " ");
-        i++;
-    }
-
-    //printf("client_message_array : %s \n", client_message_array);
-    //printf("test");
-
-    return client_message_array;
-}*/
-
 void tcp_log(struct http_header* http_header) {
-    //setbuf(stdout, NULL);  
     printf("%s %s %s %s %d %s %s\n", 
         http_header->http->verb, 
         http_header->header->host,
@@ -125,29 +119,6 @@ void tcp_log(struct http_header* http_header) {
         http_header->header->accept,
         http_header->header->user_agent
     );
-
-    //printf("strlen : %lu \n", strlen(http_header->header->host));
-
-    //puts(http_header->http->protocol);
-
-    /*char *log = (char *) malloc( sizeof(char) * 2000 );
-    
-    strncat(log, http_header->http->verb, strlen(http_header->http->verb));
-    strcat(log, " ");
-    strncat(log, http_header->header->host, strlen(http_header->header->host));
-    strcat(log, " ");
-    strncat(log, http_header->http->path, strlen(http_header->http->path));
-    strcat(log, " ");
-    strncat(log, http_header->http->protocol, strlen(http_header->http->protocol));
-    strcat(log, " ");
-    strncat(log, http_header->http->status_code, strlen(http_header->http->status_code));
-    strcat(log, " "); 
-    strncat(log, http_header->header->user_agent, strlen(http_header->header->user_agent));
-    strcat(log, " ");  
-    strncat(log, http_header->header->accept, strlen(http_header->header->accept));
-    strcat(log, " ");       
-
-    puts(log);    */
 }
 
 void *connection_handler(void* params) {
@@ -205,21 +176,8 @@ void *connection_handler(void* params) {
 
 char* create_message(char *content, struct http_header* http_header) {
     char *result = (char *) malloc( sizeof(char) * 2000 );
-    //char* content_len = (char *) malloc( sizeof(char) * 5 );
-    //sprintf(content_len, "%lu", strlen(content));
-
-    /*strcat(result, "HTTP/1.1");
-    strncat(result, " ", 1);
-    strncat(result, http_code, strlen(http_code));
-    strncat(result, " ", 1);
-    strncat(result, http_reason, strlen(http_reason));
-    strcat(result, "\r\nContent-Length:");
-    strncat(result, content_len, strlen(content_len));
-    strcat(result, "\r\n\r\n");
-    strncat(result, content, strlen(content));*/
-
+    
     char* template = "%s %d %s\r\nContent-Length: %lu\r\nContent-Type: %s\r\n\r\n%s\n";
-    //char* template = "%s %d %s\r\nContent-Type: %s\r\n\r\n%s\n";
 
     //printf("%s", result);
     sprintf(result, template, 
