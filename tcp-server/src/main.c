@@ -7,6 +7,8 @@
 
 int main(int argc, char **argv) {
 
+    setbuf(stdout, NULL);
+
     struct config conf = getOptions(argc, argv);
     //printf("port : %i\n", conf.port);
 

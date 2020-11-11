@@ -12,6 +12,8 @@
 #include <main.h>
 #include <cli.h>
 
+void sig_handler(int signo);
+
 int socket_desc, new_socket, sockaddr_in_size, *new_sock;
 struct sockaddr_in server, client;
 char *message;
@@ -25,9 +27,9 @@ char* getHelp() {
 int tcp_connect(int port) {
     printf("Start tcp-server port : %i\n", port);
 
-    /*if (signal(SIGINT, sig_handler) == SIG_ERR) {
+    if (signal(SIGINT, sig_handler) == SIG_ERR) {
         printf("\ncan't catch SIGINT\n");
-    }*/
+    }
 
      // Create socket
     socket_desc = socket(AF_INET, SOCK_STREAM, 0);
@@ -38,6 +40,8 @@ int tcp_connect(int port) {
 
     // Prepare sockaddr_in structure
     //server.sin_addr.s_addr = inet_addr("127.0.0.1");
+    //server.sin_addr.s_addr = INADDR_LOOPBACK;
+    
     server.sin_addr.s_addr = INADDR_ANY;
     server.sin_family = AF_INET;
     server.sin_port = htons(port);
@@ -150,15 +154,15 @@ void *connection_handler(void *socket_desc) {
     return 0;
 }
 
-/*void sig_handler(int signo) {
+void sig_handler(int signo) {
   if (signo == SIGINT) {
-    printf("\nreceived SIGINT\n");
+    printf("received SIGINT\n");
 
     shutdown(socket_desc, 2);
     shutdown(new_socket, 2);
     //pthread_exit(NULL);
 
-    //exit(0);
+    exit(0);
     //abort();
   }
-}*/
+}

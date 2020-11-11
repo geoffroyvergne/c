@@ -5,8 +5,21 @@ project(libcurltest)
 #set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(C_STANDARD 11)
 
-include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-conan_basic_setup()
+#include(FetchContent)
+
+set(CURL_LIBRARY "-lcurl") 
+find_package(CURL REQUIRED) 
+#add_executable (curl-demo convert.cpp)
+include_directories(${CURL_INCLUDE_DIR})
+#target_link_libraries(curl-demo ${CURL_LIBRARIES})
+
+#FetchContent_MakeAvailable(curl)
+
+#include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+#conan_basic_setup()
 
 add_executable(${PROJECT_NAME} parseurl.c)
-target_link_libraries(${PROJECT_NAME} ${CONAN_LIBS})
+#target_link_libraries(${PROJECT_NAME} ${CONAN_LIBS})
+
+# INTERFACE, OBJECT, STATIC or SHARED libraries
+target_link_libraries(${PROJECT_NAME}  ${CURL_LIBRARIES})

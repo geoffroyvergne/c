@@ -1,10 +1,6 @@
 # TCP Server
 
 ```
-gcc src/tcp-server.c -o bin/tcp-server
-```
-
-```
 cd <project/root>
 cmake -S . -B build/
 cmake --build build/
@@ -15,3 +11,17 @@ cmake --build build/
 ```
 ./build/tcp-server --port <port> default 3000
 ```
+
+# Docker
+
+```
+docker build . -t tcp-server
+docker run -p 3000:3000 --name tcp-server --rm tcp-server
+```
+
+# Todo
+
+- [ ] add host in cli params
+- [ ] Add Memory Leak checker -Valgrind
+- [ ] add unit tests and ini
+- [ ] 
