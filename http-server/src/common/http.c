@@ -57,6 +57,10 @@ struct http* extract_first_line_header(char *line, char *separator) {
         }
     }
 
+    /*if(strcmp(http->path, "/") == 0) {
+        strcat(http->path, "index.html");
+    }*/
+
     return http;
 }
 
@@ -120,8 +124,6 @@ struct http_header* extract_headers(char *lines, char *separator) {
 
         i++;  
     }
-
-    //http.status_code = "200";
 
     http_header->header = header;
     http_header->http = http;

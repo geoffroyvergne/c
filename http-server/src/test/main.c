@@ -1,47 +1,33 @@
 #include <stdio.h>
-#include <CUnit/Basic.h>
-#include <test/unit-tests.h>
+#include <stdlib.h>
+#include "CuTest.h"
 
-void basicTest(void) {
-  CU_ASSERT(2+2 == 4);
-  CU_ASSERT(1+1 == 2);
+void TestBasic(CuTest *tc) {
+    CuAssertIntEquals(tc, 2+2, 4);
 }
 
-int init_suite1(void){ return 0; }
+CuSuite* TestBasicSuite() {
+    CuSuite* suite = CuSuiteNew();
+    SUITE_ADD_TEST(suite, TestBasic);
+    return suite;
+}
 
-int clean_suite1(void){ return 0; }
+void RunAllTests(void) {
+    CuString *output = CuStringNew();
+    CuSuite* suite = CuSuiteNew();
+    
+    CuSuiteAddSuite(suite, TestBasicSuite());
+
+    CuSuiteRun(suite);
+    CuSuiteSummary(suite, output);
+    CuSuiteDetails(suite, output);
+    printf("%s\n", output->buffer);
+}
 
 int main(int argc, char **argv) {
+    printf("cutest\n");
 
-  CU_pSuite pSuite = NULL;
+    RunAllTests();
 
-  /* initialize the CUnit test registry */
-  if (CUE_SUCCESS != CU_initialize_registry())
-    return CU_get_error();
-
-   /* add a suite to the registry */
-   pSuite = CU_add_suite("Suite_1", init_suite1, clean_suite1);
-   if (NULL == pSuite) {
-      CU_cleanup_registry();
-      return CU_get_error();
-   }
-
-   /* add the tests to the suite */
-   /* NOTE - ORDER IS IMPORTANT - MUST TEST fread() AFTER fprintf() */
-   if (
-      (NULL == CU_add_test(pSuite, "test of basicTest()", basicTest)) ||
-      (NULL == CU_add_test(pSuite, "test of httpTest()", httpTest)) ||
-      (NULL == CU_add_test(pSuite, "test of fileTest()", fileTest)) ||
-      (NULL == CU_add_test(pSuite, "test of testStringUtils()", testStringUtils))
-      )
-   {
-      CU_cleanup_registry();
-      return CU_get_error();
-   }
-
-  /* Run all tests using the CUnit Basic interface */
-  CU_basic_set_mode(CU_BRM_VERBOSE);
-  CU_basic_run_tests();
-  CU_cleanup_registry();
-  return CU_get_error();
+    return EXIT_SUCCESS;
 }

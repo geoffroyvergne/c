@@ -40,8 +40,11 @@ docker run -ti --name http-server --rm http-server bash
 - [ X ] Use ini file for config
 - [ X ] add unit tests
 - [ ] Add Memory Leak checker -Valgrind
-- [ ] give ability to use localhost and 0.0.0.0 on socket
+- [ X ] give ability to use localhost and 0.0.0.0 on socket
 - [ ] use constants for http return header mimetype ...
-- [ ] dockerize
+- [ X ] dockerize
 - [ ] manage errors (www target ini conf ...)
+- [ ] test css js files
+- [ ] test images files jpg png
+- [ X ] manage index.html by default
 - [ ] 

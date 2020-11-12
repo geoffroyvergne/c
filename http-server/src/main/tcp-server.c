@@ -132,6 +132,9 @@ void *connection_handler(void* params) {
 
     struct http_header* http_header = extract_headers(client_message, "\n");    
 
+    // check if it is better with index.html
+    http_header->http->path= indexPath(http_header->http->path, connection_params->target);
+
     strcpy(uri, connection_params->target);
     strcat(uri, http_header->http->path);
 

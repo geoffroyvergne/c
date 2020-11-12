@@ -11,6 +11,7 @@ static const char* PATCH = "patch";
 
 static const char* HTTP_VERB_LIST[] = {"get", "post", "put", "delete", "option", "patch"};
 static const char* HTTP_HEADER_LIST[] = {"host", "user-agent", "accept"};
+static const char* INDEX_HTML_LIST[] = {"index.htm", "index.html"};
 
 struct header {
     char* host;
