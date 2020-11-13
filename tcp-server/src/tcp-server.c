@@ -7,7 +7,7 @@
 #include <pthread.h>
 #include <signal.h>
 #include <string.h>
-
+#include <netinet/in.h>
 #include <tcp-server.h>
 #include <main.h>
 #include <cli.h>

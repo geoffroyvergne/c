@@ -3,7 +3,7 @@ set(LIB_COMMON common)
 
 # Add specific compilation options
 #-fvisibility=default
-add_compile_options(-fvisibility=hidden -fvisibility-inlines-hidden)
+add_compile_options(-fvisibility=hidden)
 
 # Add conan dependencies
 #include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)

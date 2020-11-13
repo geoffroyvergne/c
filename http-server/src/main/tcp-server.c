@@ -6,7 +6,7 @@
 #include <arpa/inet.h>
 #include <pthread.h>
 #include <signal.h>
-
+#include <netinet/in.h>
 #include <tcp-server.h>
 #include <file.h>
 #include <string-utils.h>
