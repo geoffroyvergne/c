@@ -6,6 +6,13 @@ cmake -S . -B build/
 cmake --build build/
 ```
 
+## Dependencies lib
+
+```
+CuTest 
+inih
+```
+
 # Run
 
 ```
@@ -45,6 +52,7 @@ docker run -ti --name http-server --rm http-server bash
 - [ X ] dockerize
 - [ ] manage errors (www target ini conf ...)
 - [ ] test css js files
-- [ ] test images files jpg png
+- [ ] send images files jpg png over socket
 - [ X ] manage index.html by default
+- [ ] Add Variable env in config
 - [ ] 

@@ -24,4 +24,6 @@ docker run -p 3000:3000 --name tcp-server --rm tcp-server
 - [ ] add host in cli params
 - [ ] Add Memory Leak checker -Valgrind
 - [ ] add unit tests and ini
+- [ ] Refactor commands part in tcp-server.c
+- [ ] Add Variable env in config
 - [ ] 
