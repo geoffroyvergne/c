@@ -4,6 +4,102 @@
 #include <string.h>
 #include <http.h>
 
+/*char* getBinaryFile(char *filename) {
+    FILE *img = fopen(filename, "rb");
+    fseek(img, 0, SEEK_END);
+    unsigned long filesize = ftell(img);
+    
+    //printf("filesize : %lu\n", filesize);
+    
+    char *buffer = (char*)malloc(sizeof(char)*filesize);
+    rewind(img);
+    // store read data into buffer
+    fread(buffer, sizeof(char), filesize, img);
+
+    // send buffer to client
+    int sent = 0;
+    while (sent < filesize)
+    {
+        int n = send(clientsocket, buffer + sent, filesize - sent, 0);
+        if (n == -1)
+            break;  // ERROR
+
+        sent += n;
+    }
+
+    return buffer;
+}*/
+
+int fileEsists(char *filename) {
+    FILE *pFile;
+    if((pFile = fopen(filename,"r"))!=NULL) {
+        return 1;
+        fclose(pFile);
+    }
+
+    return 0;
+}
+
+char* getBinaryFile(char *filename) {
+    FILE * pFile;
+    long lSize;
+    char * buffer;
+    size_t result;
+
+    pFile = fopen (filename, "rb");
+    if (pFile==NULL) {
+        fputs ("File error",stderr); 
+        exit (1);
+    }
+
+    // obtain file size:
+    fseek (pFile, 0, SEEK_END);
+    lSize = ftell (pFile);
+    rewind (pFile);
+
+    // allocate memory to contain the whole file:
+    buffer = (char*) malloc(sizeof(char)*lSize);
+    if (buffer == NULL) {
+        fputs ("Memory error",stderr); 
+        exit (2);
+    }
+
+    // copy the file into the buffer:
+    result = fread(buffer,1,lSize,pFile);
+    if (result != lSize) {
+        fputs ("Reading error",stderr); 
+        exit (3);
+    }
+
+    /* the whole file is now loaded in the memory buffer. */
+
+    // terminate
+    fclose(pFile);
+    //free (buffer);
+    return buffer;
+}
+
+unsigned long getFileSize(char *filename) {
+    // opening the file in read mode 
+    FILE* fp = fopen(filename, "r"); 
+  
+    // checking if the file exist or not 
+    if (fp == NULL) { 
+        printf("File Not Found!\n"); 
+        return -1; 
+    } 
+  
+    fseek(fp, 0L, SEEK_END); 
+  
+    // calculating the size of the file 
+    long int res = ftell(fp); 
+  
+    // closing the file 
+    fclose(fp); 
+  
+    return res; 
+}
+
 char* read_file(char *filename) {
    char *buffer = NULL;
    int string_size, read_size;

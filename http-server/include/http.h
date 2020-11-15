@@ -35,6 +35,8 @@ struct http_header {
 
 struct http *extract_first_line_header(char *line, char *separator);
 struct http_header* extract_headers(char *lines, char *separator);
+
+int isBinary(char* uri);
 char* getContentType(char* uri);
 
 #endif

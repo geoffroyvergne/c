@@ -22,6 +22,22 @@ char* getContentType(char* uri) {
     return NULL;
 }
 
+int isBinary(char* uri) {
+    if(strstr(uri, ".txt")) return 0;
+    //if(strstr(uri, ".htm")) return 0;
+    if(strstr(uri, ".html")) return 0;
+
+    if(strstr(uri, ".css")) return 0;
+    if(strstr(uri, ".js")) return 0;
+
+    if(strstr(uri, ".png")) return 1;
+    if(strstr(uri, ".jpg")) return 1;
+    if(strstr(uri, ".gif")) return 1;
+    if(strstr(uri, ".svg")) return 0;
+
+    return 0;
+}
+
 // Check if string contains a valid http verb
 int isValidVerb(char * value) {
     int validVerb = 0;

@@ -138,19 +138,36 @@ void *connection_handler(void* params) {
     strcpy(uri, connection_params->target);
     strcat(uri, http_header->http->path);
 
-    char* contentType = getContentType(uri);
-    http_header->http->content_type = contentType;
-    
-    char *content = read_file(uri);
+    //char* contentType = getContentType(uri);
+    http_header->http->content_type = getContentType(uri);
+
+    int binary = isBinary(uri);
 
     char *message = (char *) malloc( sizeof(char) * 2000 );
     char* content_len = (char *) malloc( sizeof(char) * 5 );
 
-    if(content != NULL) {
-        http_header->http->status_code = 200;
-        http_header->http->status_reason = "OK";  
-        message = create_message(content, http_header);
-        write(sock, message, strlen(message));         
+    if(fileEsists(uri)) {
+        if(binary) {
+            char *buffer = getBinaryFile(uri);
+
+            http_header->http->status_code = 200;
+            http_header->http->status_reason = "OK";  
+
+            unsigned long filesize = getFileSize(uri);
+
+            message = create_message("", filesize, http_header);
+        
+            send(sock, message, strlen(message), 0); 
+            send(sock, buffer, filesize, 0);
+        } else {
+            char *content = read_file(uri);
+            http_header->http->status_code = 200;
+            http_header->http->status_reason = "OK";  
+            message = create_message(content, strlen(content), http_header);
+            write(sock, message, strlen(message));   
+
+            free(content);      
+        }
     } else {
         char* not_found_uri = (char *) malloc( sizeof(char) * 2000 );
         strcpy(not_found_uri, connection_params->target);
@@ -159,17 +176,18 @@ void *connection_handler(void* params) {
 
         http_header->http->status_code = 404;
         http_header->http->status_reason = "NOT FOUND";
-        message = create_message(content, http_header);
+        message = create_message(content, strlen(content), http_header);
         write(sock, message, strlen(message));        
 
         free(not_found_uri);
     }
 
-    tcp_log(http_header);
-    free(http_header);
-    free(content);
     free(message);
     free(content_len);
+
+    tcp_log(http_header);
+    free(http_header);
+    
     free(uri);
     close(sock);    
     pthread_exit(NULL);
@@ -177,20 +195,33 @@ void *connection_handler(void* params) {
     return 0;
 }
 
-char* create_message(char *content, struct http_header* http_header) {
+char* create_message(char *content, unsigned long contentLength, struct http_header* http_header) {
     char *result = (char *) malloc( sizeof(char) * 2000 );
     
-    char* template = "%s %d %s\r\nContent-Length: %lu\r\nContent-Type: %s\r\n\r\n%s\n";
+    //accept-ranges: bytes\r\n
+    char* template;
+
+    if(strlen(content) > 0) {
+        template = "%s %d %s\r\nContent-Length: %lu\r\nContent-Type: %s\r\n\r\n%s\r\n";
+    } else {
+        template = "%s %d %s\r\nContent-Length: %lu\r\nContent-Type: %s\r\n\r\n";
+    }
+    
 
     //printf("%s", result);
     sprintf(result, template, 
         toUpperCase(http_header->http->protocol),
         http_header->http->status_code, 
         http_header->http->status_reason, 
-        strlen(content),
+        //strlen(content),
+        contentLength,
         http_header->http->content_type, 
         content
     );
+
+    /*if(strlen(content > 0)) {
+        strcat(result, content);
+    }*/
 
     //puts(result);
 
