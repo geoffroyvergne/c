@@ -112,6 +112,8 @@ struct http_header* extract_headers(char *lines, char *separator) {
         // and extract http standards headers
         token_line = toLowerCase(token_line);
 
+        //puts(token_line);
+
         // iterate over headers to extract them
         /*size_t j = 0;
         for( j = 0; j < sizeof(HTTP_HEADER_LIST) / sizeof(HTTP_HEADER_LIST[0]); j++) {
@@ -123,19 +125,24 @@ struct http_header* extract_headers(char *lines, char *separator) {
             //puts(HTTP_HEADER_LIST[j]);
         }*/
         
+        // TODO debug results
         key = "host";
         if(strstr(token_line, key)) {
             header->host = substr(token_line, (strlen(key)+2), (strlen(token_line) -1));
+            header->host = "";
+            //printf("header host : %s\n", header->host);
         }
 
         key = "user-agent";
         if(strstr(token_line, key)) {
-            header->user_agent = substr(token_line, (strlen(key)+2), strlen(token_line) -1);
+            //header->user_agent = substr(token_line, (strlen(key)+2), strlen(token_line) -1);
+            header->user_agent = "";
         }
 
         key = "accept";
         if(strstr(token_line, key)) {
-            header->accept = substr(token_line, (strlen(key)+2), strlen(token_line) -1);
+            //header->accept = substr(token_line, (strlen(key)+2), strlen(token_line) -1);
+            header->accept = "";
         }
 
         i++;  

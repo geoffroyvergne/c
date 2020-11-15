@@ -4,29 +4,44 @@
 #include <stdlib.h>
 
 char *ltrim(char *s) {
-    while(isspace(*s)) s++;
-    return s;
+	char* tmp_s = (char *) malloc( sizeof(char) * 2000 );
+	strcpy(tmp_s, s);
+
+    while(isspace(*tmp_s)) tmp_s++;
+    return tmp_s;
 }
 
 char *rtrim(char *s) {
-    char* back = s + strlen(s);
+	char* tmp_s = (char *) malloc( sizeof(char) * 2000 );
+	strcpy(tmp_s, s);
+
+    char* back = tmp_s + strlen(s);
     while(isspace(*--back));
     *(back+1) = '\0';
-    return s;
+    return tmp_s;
 }
 
 char *trim(char *s) {
-    return rtrim(ltrim(s)); 
+	char* tmp_s = (char *) malloc( sizeof(char) * 2000 );
+	strcpy(tmp_s, s);
+
+    return rtrim(ltrim(tmp_s)); 
 }
 
 char* toLowerCase(char* s) {
-  for(char *p=s; *p; p++) *p=tolower(*p);
-  return s;
+	char* tmp_s = (char *) malloc( sizeof(char) * 2000 );
+	strcpy(tmp_s, s);
+
+  	for(char *p=tmp_s; *p; p++) *p=tolower(*p);
+  	return tmp_s;
 }
 
 char* toUpperCase(char* s) {
-  for(char *p=s; *p; p++) *p=toupper(*p);
-  return s;
+	char* tmp_s = (char *) malloc( sizeof(char) * 2000 );
+	strcpy(tmp_s, s);
+
+  	for(char *p=tmp_s; *p; p++) *p=toupper(*p);
+ 	return tmp_s;
 }
 
 char* substr(const char *src, int m, int n) {

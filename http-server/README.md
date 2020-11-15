@@ -52,7 +52,9 @@ docker run -ti --name http-server --rm http-server bash
 - [ X ] dockerize
 - [ ] manage errors (www target ini conf ...)
 - [ ] test css js files
-- [ ] send images files jpg png over socket
+- [ X ] send images files jpg png over socket
 - [ X ] manage index.html by default
 - [ ] Add Variable env in config
+- [ ] Add SSL/TLS support
+- [ ] Debug header parser
 - [ ] 
