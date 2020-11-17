@@ -1,7 +1,6 @@
 #!/bin/sh
 
-#export CC = /usr/bin/clang-9
-#export CXX = /usr/bin/clan++-9
+./configure.sh
 
 rm -Rf build/
 
