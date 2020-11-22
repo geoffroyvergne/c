@@ -18,7 +18,7 @@ include_directories(${CURL_INCLUDE_DIR})
 #include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 #conan_basic_setup()
 
-add_executable(${PROJECT_NAME} parseurl.c)
+add_executable(${PROJECT_NAME} getinmemory.c)
 #target_link_libraries(${PROJECT_NAME} ${CONAN_LIBS})
 
 # INTERFACE, OBJECT, STATIC or SHARED libraries
