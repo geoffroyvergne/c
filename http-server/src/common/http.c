@@ -128,7 +128,7 @@ struct http_header* extract_headers(char *lines, char *separator) {
         // TODO debug results
         key = "host";
         if(strstr(token_line, key)) {
-            header->host = substr(token_line, (strlen(key)+2), (strlen(token_line) -1));
+            //header->host = substr(token_line, (strlen(key)+2), (strlen(token_line) -1));
             header->host = "";
             //printf("header host : %s\n", header->host);
         }

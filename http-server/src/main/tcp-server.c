@@ -92,6 +92,10 @@ int tcp_connect(int port, char* host, char* target) {
             perror("couldn't create thread\n");
             return 1;
         }
+
+        free(new_sock);
+        //free(params);
+        //free(sniffer_thread);
     }
     
     if( (new_socket < 0) ) {
@@ -100,6 +104,7 @@ int tcp_connect(int port, char* host, char* target) {
 
     shutdown(socket_desc, 2);
     shutdown(new_socket, 2);
+
     pthread_exit(NULL);
 }
 
@@ -125,15 +130,15 @@ void *connection_handler(void* params) {
     struct connection_handler_params *connection_params = (struct connection_handler_params*)params;
 
     int sock = *(int*) connection_params->socket_desc;   
-    char *client_message = (char *) malloc( sizeof(char) * 2000 );
-    char *uri = (char *) malloc( sizeof(char) * 2000 );
+    char *client_message = (char *) malloc(sizeof(char) * 2000);
+    char *uri = (char *) malloc(sizeof(char) * 2000);
 
     recv(sock, client_message, 2000, 0);
 
     struct http_header* http_header = extract_headers(client_message, "\n");    
 
     // check if it is better with index.html
-    http_header->http->path= indexPath(http_header->http->path, connection_params->target);
+    http_header->http->path = indexPath(http_header->http->path, connection_params->target);
 
     strcpy(uri, connection_params->target);
     strcat(uri, http_header->http->path);
@@ -143,12 +148,15 @@ void *connection_handler(void* params) {
 
     int binary = isBinary(uri);
 
-    char *message = (char *) malloc( sizeof(char) * 2000 );
+    char* message = (char *) malloc( sizeof(char) * 2000 );
+    char* content = (char *) malloc(sizeof(char) * 500000);
     char* content_len = (char *) malloc( sizeof(char) * 5 );
+    char* buffer = (char *) malloc(sizeof(char) * 500000);
+    char* not_found_uri = (char *) malloc( sizeof(char) * 2000 );
 
     if(fileEsists(uri)) {
         if(binary) {
-            char *buffer = getBinaryFile(uri);
+            buffer = getBinaryFile(uri);
 
             http_header->http->status_code = 200;
             http_header->http->status_reason = "OK";  
@@ -160,36 +168,35 @@ void *connection_handler(void* params) {
             send(sock, message, strlen(message), 0); 
             send(sock, buffer, filesize, 0);
         } else {
-            char *content = read_file(uri);
+            content = read_file(uri);
             http_header->http->status_code = 200;
             http_header->http->status_reason = "OK";  
             message = create_message(content, strlen(content), http_header);
             write(sock, message, strlen(message));   
-
-            free(content);      
         }
-    } else {
-        char* not_found_uri = (char *) malloc( sizeof(char) * 2000 );
+    } else {        
         strcpy(not_found_uri, connection_params->target);
         strcat(not_found_uri, "/error/404.html");
-        char *content = read_file(not_found_uri);
+        content = read_file(not_found_uri);
 
         http_header->http->status_code = 404;
         http_header->http->status_reason = "NOT FOUND";
         message = create_message(content, strlen(content), http_header);
         write(sock, message, strlen(message));        
-
-        free(not_found_uri);
     }
 
-    free(message);
-    free(content_len);
-
     tcp_log(http_header);
+    close(sock);  
+
+    free(message);
+    free(content);
+    free(content_len);
+    free(client_message);
     free(http_header);
-    
+    free(connection_params);
     free(uri);
-    close(sock);    
+    free(not_found_uri);
+
     pthread_exit(NULL);
 
     return 0;
