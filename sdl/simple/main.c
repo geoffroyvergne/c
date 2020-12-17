@@ -1,46 +1,38 @@
-#include <SDL.h>
 #include <stdio.h>
-
-SDL_Surface *demo_screen;
+#include <SDL.h>
 
 int main(int argc, char** argv) {
-    SDL_Event ev;
-    int active;
-
-    // Init SDL
-    if(SDL_Init(SDL_INIT_VIDEO) != 0) {
+    if (SDL_Init(SDL_INIT_VIDEO) != 0){
         fprintf(stderr, "Could not initialize SDL: %s\n", SDL_GetError());
+        return 1;
     }
 
-    printf("SDL Initialized\n");
+    SDL_Window* pWindow = NULL;
+    pWindow = SDL_CreateWindow("SDL_CreateWindow Error", SDL_WINDOWPOS_UNDEFINED,
+                                                        SDL_WINDOWPOS_UNDEFINED,
+                                                        640,
+                                                        480,
+                                                        SDL_WINDOW_SHOWN);
 
-    demo_screen = SDL_SetVideoMode(320, 240, 0, SDL_HWSURFACE|SDL_DOUBLEBUF);
-    if(!demo_screen) {
-        fprintf(stderr, "Could not set video mode: %s\n", SDL_GetError());
-    }
+    if( pWindow ) {
+        //SDL_Delay(3000);
 
-    // Main loop
-    active = 1;
-    while(active) {
-        while(SDL_PollEvent(&ev)) {
-
-            // Handle event
-            if(ev.type == SDL_QUIT) {
-                active = 0;
-                printf("Quit\n");
+        int active = 1;
+        SDL_Event e;                      
+        while (active) {            
+            while (SDL_PollEvent(&e)) {
+                if (e.type == SDL_QUIT) {
+                    active = 0;
+                }
             }
-
-            // Clear screen
-            //SDL_FillRect(demo_screen,NULL,SDL_MapRGBA(demo_screen->format,0,0,255,255));
-
-            // Show screen
-            SDL_Flip(demo_screen);
-
         }
+        SDL_DestroyWindow(pWindow);
+    }
+    else {
+        fprintf(stderr,"SDL_CreateWindow Error: %s\n",SDL_GetError());
     }
 
     SDL_Quit();
-    printf("SDL Shutdown\n");
 
     return 0;
 }
