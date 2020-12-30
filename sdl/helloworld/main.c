@@ -29,7 +29,7 @@ void init() {
 	}
 }
 
-SDL_Surface* loadImage(char* file, SDL_Renderer *ren){
+SDL_Surface* loadImage(char* file, SDL_Renderer *ren) {
 	SDL_Surface *img = IMG_Load(file);
     if (img == NULL){
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "IMG_Load Error: %s\n", IMG_GetError());
@@ -51,7 +51,7 @@ SDL_Texture* renderSurface(SDL_Renderer *ren, SDL_Surface *img) {
 	return tex;
 }
 
-SDL_Texture* loadTexture(char* file, SDL_Renderer *ren){
+SDL_Texture* loadTexture(char* file, SDL_Renderer *ren) {
 	SDL_Texture *texture = IMG_LoadTexture(ren, file);
 	if (texture == NULL){		
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "LoadTexture");
