@@ -12,7 +12,7 @@ openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout ./key.pem -out ./cer
 
 ## Compile
 
-gcc main.c -I/usr/local/Cellar/openssl@1.1/1.1.1h/include -L /usr/local/Cellar/openssl@1.1/1.1.1h/lib -lssl -lcrypto -o bin/ssl-server
+gcc main.c -I/usr/local/Cellar/openssl@1.1/1.1.1i/include -L /usr/local/Cellar/openssl@1.1/1.1.1i/lib -lssl -lcrypto -o bin/ssl-server
 
 ## test
 

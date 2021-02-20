@@ -6,8 +6,7 @@
 #include <openssl/ssl.h>
 #include <openssl/err.h>
 
-int create_socket(int port)
-{
+int create_socket(int port) {
     int s;
     struct sockaddr_in addr;
 
@@ -36,19 +35,16 @@ int create_socket(int port)
     return s;
 }
 
-void init_openssl()
-{ 
+void init_openssl() {
     SSL_load_error_strings();	
     OpenSSL_add_ssl_algorithms();
 }
 
-void cleanup_openssl()
-{
+void cleanup_openssl() {
     EVP_cleanup();
 }
 
-SSL_CTX *create_context()
-{
+SSL_CTX *create_context() {
     const SSL_METHOD *method;
     SSL_CTX *ctx;
 
@@ -64,8 +60,7 @@ SSL_CTX *create_context()
     return ctx;
 }
 
-void configure_context(SSL_CTX *ctx)
-{
+void configure_context(SSL_CTX *ctx) {
     SSL_CTX_set_ecdh_auto(ctx, 1);
 
     /* Set the key and cert */
@@ -80,8 +75,7 @@ void configure_context(SSL_CTX *ctx)
     }
 }
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
     int sock;
     SSL_CTX *ctx;
 
