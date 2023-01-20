@@ -1,0 +1,27 @@
+version: '3'
+
+tasks:
+  build:
+    desc: Build binary.
+    cmds:
+      - gcc hello-world.c -o bin/hello-world
+    deps:
+      - create-bin
+  
+  run:
+    desc: Run binary.
+    cmds:
+      - bin/hello-world
+    deps:
+      - build
+
+  create-bin:
+    cmds:
+      - mkdir bin
+    status:
+      - test -d bin/
+
+  clean:
+    desc: Clean binary directory.
+    cmds:
+      - rm -Rf bin/

@@ -1,0 +1,34 @@
+version: '3'
+
+tasks:
+  build:
+    desc: Build binary.
+    cmds:
+      - cmake -S . -B build/
+      - cmake --build build/
+    deps:
+      - create-bin
+  
+  run:
+    desc: Run binary.
+    cmds:
+      - build/helloworld
+    deps:
+      - build
+
+  create-bin:
+    cmds:
+      - mkdir build
+    status:
+      - test -d build/
+
+  clean:
+    desc: Clean binary directory.
+    cmds:
+      - rm -Rf build/
+
+  clean-build:    
+    desc: Clean build the go binary.
+    deps:
+      - clean
+      - build
