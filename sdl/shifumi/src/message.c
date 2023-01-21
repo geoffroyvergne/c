@@ -22,8 +22,8 @@ void message_displayMessage(struct Message *message) {
     message->sdlTexture = SDL_CreateTextureFromSurface(message->render, message->sdlSurface);
     SDL_RenderCopy(message->render, message->sdlTexture, NULL, &message->textureParams);  
 
-    SDL_DestroyTexture(message->sdlTexture);
-    SDL_FreeSurface(message->sdlSurface);
+    //SDL_DestroyTexture(message->sdlTexture);
+    //SDL_FreeSurface(message->sdlSurface);
 }
 
 void message_cleanUp(struct Message *message) {

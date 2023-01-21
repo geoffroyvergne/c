@@ -5,11 +5,9 @@
 #include <SDL_ttf.h>
 
 #include <piece.h>
+#include <core.h>
 
 void piece_init(enum PieceType pieceType, struct Piece *piece) {
-    //SDL_Rect srcTextureParams = { 0, 0,  90, 90 }; // Real texture size and placement
-    //piece->srcTextureParams = srcTextureParams;
-
     piece_togglePieceType(pieceType, piece);
 
     SDL_Rect destTextureParams = { 120, 120,  90, 90 }; // Texture seen in game
@@ -95,7 +93,7 @@ void piece_randomPiece(struct Piece *piece) {
 }
 
 void piece_display(struct Piece *piece) {
-    SDL_RenderCopy(piece->render, piece->sdl_texture, &piece->srcTextureParams, &piece->destTextureParams);
+    SDL_RenderCopy(core->render, core->sdl_texture, &piece->srcTextureParams, &piece->destTextureParams);
 }
 
 void piece_cleanup() {

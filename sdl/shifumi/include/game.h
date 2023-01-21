@@ -5,18 +5,12 @@
 #ifndef GAME
 #define GAME
 
-struct Game {    
-    char* name;
-    int width;
-    int height;
-    int loopDelay;
-    int partyNumber;
-    SDL_Window *window;
-    SDL_Renderer *render;
+struct Game {        
+    int partyNumber;    
     struct Player *player1;
     struct Player *player2;
     struct Player *playerNone;
-    struct Message *message;
+    //struct Message *message;
     enum PlayerType winner;
 };
 

@@ -1,37 +1,23 @@
 #include <stdio.h>
 #include <game.h>
-#include <message.h>
-
-void game_init() {
-    //Start up SDL, and make sure it went ok
-	if (SDL_Init(SDL_INIT_VIDEO) != 0){
-		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Could not initialize SDL: %s\n", SDL_GetError());
-        
-		exit(EXIT_FAILURE);
-	}
-
-	// Create window
-	game->window = SDL_CreateWindow(game->name, 100, 100, game->width, game->height, SDL_WINDOW_SHOWN);
-	if (game->window == NULL) {game_cleanup(); exit(EXIT_FAILURE);}
-
-	// Create render
-	game->render = SDL_CreateRenderer(game->window, -1, 0);
-	//render = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);	
-	if (game->render == NULL) {game_cleanup(); exit(EXIT_FAILURE);}
-
-    SDL_SetRenderDrawColor(game->render, 255, 255, 255, 255);
-    //SDL_RenderClear(game_render);
-	//SDL_RenderPresent(game_render); 
-}
+//#include <message.h>
+#include <core.h>
 
 void game_renderView() {
-    SDL_RenderClear(game->render);
+    SDL_RenderClear(core->render);
 
-    message_displayMessage(game->message);
+    SDL_Rect textureParamsTitle = { 128, 20,  256, 35 };
+    SDL_Color colorTitle = { 255, 165, 0 };
+    core_display_message("Shifumi", colorTitle, 40, textureParamsTitle);
+
+    SDL_Rect textureParamsScore = { 120, 55,  260, 60 };
+    SDL_Color colorScore = { 128, 128, 128 };
+    core_display_message(game_getScore(), colorScore, 20, textureParamsScore);
+
     piece_display(game->player1->piece);
     piece_display(game->player2->piece);
 
-    SDL_RenderPresent(game->render);
+    SDL_RenderPresent(core->render);
 }
 
 void game_startLoop() {
@@ -42,7 +28,7 @@ void game_startLoop() {
         while (SDL_PollEvent(&e)) {	            
 
             //if (e.type == SDL_QUIT || e.key.keysym.sym == SDLK_ESCAPE || e.key.keysym.sym == SDLK_q) {
-            if (e.type == SDL_QUIT) {
+            if (e.type == SDL_QUIT || e.key.keysym.sym == SDLK_q) {
 				active = 0;
 				SDL_Log("Quit");
 			}            
@@ -60,7 +46,7 @@ void game_startLoop() {
                         // Update render
                         game_renderView();
 
-                        SDL_Delay(1000);
+                        SDL_Delay(core->loopDelay);
 
                         game_result();
                         game_setWinner(game->winner);
@@ -69,14 +55,9 @@ void game_startLoop() {
                         SDL_Log("partyNumber %d winner : %s", game->partyNumber, game_getWinner(game->winner)->name);                       
                         SDL_Log("%s" , game_getScore());
 
-                        // Update score message
-                        game->message->message = game_getScore();
-                        
                         game_newGame();
 
                         game_renderView();
-
-                        //SDL_Delay(1000);
 
                         break;
                     }
@@ -91,7 +72,7 @@ void game_startLoop() {
                     break;
                 }
         }
-        SDL_Delay(game->loopDelay); 
+        //SDL_Delay(core->loopDelay); 
     }
 }
 
@@ -133,8 +114,8 @@ struct Player* game_getWinner(enum PlayerType type) {
 
 char* game_getScore() {
     char *result = (char *) malloc( sizeof(char) * 2000 );
-    sprintf(result, "%s - %d / %s - %d", 
-        game->player1->name, game->player1->score, game->player2->name, game->player2->score);
+    sprintf(result, "%d %s - %d | %s - %d", 
+        game->partyNumber, game->player1->name, game->player1->score, game->player2->name, game->player2->score);
 
     return result;
 }
@@ -148,10 +129,4 @@ void game_newGame() {
     game->player2->winner = 0;
 
     game->winner = playerNoneType;
-}
-
-void game_cleanup() {
-    SDL_DestroyRenderer(game->render);
-    SDL_DestroyWindow(game->window);
-	SDL_Quit();
 }

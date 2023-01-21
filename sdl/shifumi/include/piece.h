@@ -13,8 +13,6 @@ struct Piece {
     enum PieceType pieceType;
     SDL_Rect srcTextureParams; // Real texture size and placement
     SDL_Rect destTextureParams; // Texture seen in game
-    SDL_Renderer *render;
-    SDL_Texture *sdl_texture;
 };
 
 //struct Piece *piece;
