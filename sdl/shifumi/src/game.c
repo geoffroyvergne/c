@@ -69,6 +69,14 @@ void game_startLoop() {
                         
                         break;
                     }
+
+                    // reset key
+                    if (e.key.keysym.sym == SDLK_r) {
+                        SDL_Log("New Game\n");
+                        game->partyNumber = 0;
+                        game->player1->score = 0;
+                        game->player2->score = 0;
+                    }
                     break;
                 }
         }
